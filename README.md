@@ -1,4 +1,4 @@
-# gin-csrf [![Build Status](https://travis-ci.org/utrack/gin-csrf.svg?branch=master)](https://travis-ci.org/utrack/gin-csrf)
+# gin-csrf [![Build Status](https://travis-ci.org/arywidiantara/gin-csrf.svg?branch=master)](https://travis-ci.org/arywidiantara/gin-csrf)
 
 CSRF protection middleware for [Gin]. This middleware has to be used with [gin-contrib/sessions](https://github.com/gin-contrib/sessions).
 
@@ -7,7 +7,7 @@ Original credit to [tommy351](https://github.com/tommy351/gin-csrf), this fork m
 ## Installation
 
 ``` bash
-$ go get github.com/utrack/gin-csrf
+$ go get github.com/arywidiantara/gin-csrf
 ```
 
 ## Usage
@@ -18,7 +18,7 @@ import (
 
     "github.com/gin-gonic/gin"
     "github.com/gin-contrib/sessions"
-    "github.com/utrack/gin-csrf"
+    "github.com/arywidiantara/gin-csrf"
 )
 
 func main(){
@@ -44,4 +44,4 @@ func main(){
 ```
 
 [Gin]: http://gin-gonic.github.io/gin/
-[gin-sessions]: https://github.com/utrack/gin-sessions
+[gin-sessions]: https://github.com/arywidiantara/gin-sessions
