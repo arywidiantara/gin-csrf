@@ -7,8 +7,8 @@ import (
 	"io"
 
 	"github.com/dchest/uniuri"
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/tommy351/gin-sessions"
 )
 
 const (
@@ -34,7 +34,7 @@ var defaultTokenGetter = func(c *gin.Context) string {
 		return t
 	} else if t := r.Header.Get("X-XSRF-TOKEN"); len(t) > 0 {
 		return t
-	} else if t := r.FormValue("auth"); len(t) > 0 {
+	} else if t := r.FormValue("token"); len(t) > 0 {
 		return t
 	}
 
@@ -89,7 +89,7 @@ func Middleware(options Options) gin.HandlerFunc {
 	}
 
 	return func(c *gin.Context) {
-		session := sessions.Default(c)
+		session := sessions.Get(c)
 		c.Set(csrfSecret, options.Secret)
 
 		if inArray(ignoreMethods, c.Request.Method) {
@@ -97,12 +97,16 @@ func Middleware(options Options) gin.HandlerFunc {
 			return
 		}
 
-		salt, ok := session.Get(csrfSalt).(string)
+		var salt string
 
-		if !ok || len(salt) == 0 {
-			errorFunc(c)
+		if s, ok := session.Get(csrfSalt).(string); !ok || len(s) == 0 {
+			c.Next()
 			return
+		} else {
+			salt = s
 		}
+
+		session.Delete(csrfSalt)
 
 		token := tokenGetter(c)
 
@@ -117,20 +121,17 @@ func Middleware(options Options) gin.HandlerFunc {
 
 // GetToken returns a CSRF token.
 func GetToken(c *gin.Context) string {
-	session := sessions.Default(c)
+	session := sessions.Get(c)
 	secret := c.MustGet(csrfSecret).(string)
 
 	if t, ok := c.Get(csrfToken); ok {
 		return t.(string)
 	}
 
-	salt, ok := session.Get(csrfSalt).(string)
-	if !ok {
-		salt = uniuri.New()
-		session.Set(csrfSalt, salt)
-		session.Save()
-	}
+	salt := uniuri.New()
 	token := tokenize(secret, salt)
+	session.Set(csrfSalt, salt)
+	session.Save()
 	c.Set(csrfToken, token)
 
 	return token
