@@ -34,6 +34,8 @@ var defaultTokenGetter = func(c *gin.Context) string {
 		return t
 	} else if t := r.Header.Get("X-XSRF-TOKEN"); len(t) > 0 {
 		return t
+	} else if t := r.FormValue("auth"); len(t) > 0 {
+		return t
 	}
 
 	return ""
