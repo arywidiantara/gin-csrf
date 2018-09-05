@@ -36,6 +36,8 @@ var defaultTokenGetter = func(c *gin.Context) string {
 		return t
 	} else if t := r.FormValue("token"); len(t) > 0 {
 		return t
+	} else if t := r.FormValue("auth"); len(t) > 0 {
+		return t
 	}
 
 	return ""
